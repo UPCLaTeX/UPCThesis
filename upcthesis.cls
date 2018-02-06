@@ -213,6 +213,62 @@
 
 \@addtoreset{footnote}{page}
 
+\renewcommand{\thefigure}{%
+	\ifnum \c@section > \z@ \thesection - \fi \@arabic \c@figure
+}
+\renewcommand{\thetable}{%
+	\ifnum \c@section > \z@ \thesection - \fi \@arabic \c@table
+}
+\@addtoreset{figure}{section}
+\@addtoreset{table}{section}
+
+
+% 设置图表 Caption 的样式
+\RequirePackage{caption}
+\DeclareCaptionFont{UPC}{\normalsize \heiti}
+\captionsetup{labelse=quad}
+\captionsetup{font={UPC, singlespacing}}
+\captionsetup[figure]{position=bottom, skip={0pt}}
+\captionsetup[table]{position=top, skip={0pt}}
+\setlength{\textfloatsep}{0pt}
+\setlength{\floatsep}{0pt}
+\setlength{\intextsetp}{6pt}
+\setlength{\abovecaptionskip}{0pt}
+\setlegnth{\belowcaptionskip}{0pt}
+
+% 重新设置图表 auto ref
+\def\figureautorefname~#1\null{%
+	图~#1~\null
+}
+\def\tableautorefname~#1\null{%
+	表~#1~\null
+}
+
+% 使用 tabularx 库定义新的左右中格式
+\RequirePackage{tabularx}
+\RequirePackage{makecell}
+\newcolumntype{L}{X}
+\newcolumntype{C}{>{\centering \arraybackslash}X}
+\newcolumntype{R}{>{\ragerdright \arraybackslash}X}
+
+% 添加复杂的表格宏
+\RequirePackage{booktabs}
+% 设置三线表格式
+\setlength{\heavyrulewidth}{1.5pt}
+\setlength{\lightrulewidth}{0.5pt}
+\setlength{\cmidrulewidth}{0.5pt}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
