@@ -10,6 +10,9 @@
 
 % Contributer: Ionizing Radiation
 
+% Todo list: 继续完成定制；修改hdr使之添加章节号；修改bfseries的 ``boldness''；修复标题页 学号 栏不齐的bug
+
+
 \def\UPC@name{upcthesis}
 \def\UPC@date{1926/08/17}
 \def\UPC@version{v0.0}
@@ -107,8 +110,8 @@
 \RequirePackage{fancyhdr}
 \RequirePackage{tikz}
 
-\newcommand{\headstyle} {%
-	\fancyhead[C]{\huawenzhongsong \zihao{5} 中国石油大学（华东）本科毕业设计(论文)}
+\newcommand{\headstyleatbegin} {%
+	\fancyhead[C]{\kaishu \zihao{5} 中国石油大学（华东）本科毕业设计(论文)}
 }
 
 \newcommand{\footstyle}{%
@@ -116,12 +119,12 @@
 }
 \pagestyle{fancy}
 \fancyhf{}
-\headstyle
+\headstyleatbegin
 \footstyle
 
 \fancypagestyle{main}{%
 	\fancyhf{}
-	\headstyle
+	\headstyleatbegin	%%%%%%% to do here
 	\footstyle
 }
 
@@ -399,6 +402,237 @@
 %----------------------------
 %使用特殊符号
 \RequirePackage{amssymb}
+
+% 设置statement的参数解析
+\def\UPC@checkedbox{$\text{\rlap{\checkmark}}\square$}
+\def\UPC@box{$\square$}
+\newcommand{\arg@statement}[2]{%
+	\IfStrEqCase{#1}{%
+		{confidentiality}{%
+			\IfStrEqCase{#2}{%
+				{yes}{%
+					\def\UPC@confidential{\UPC@checkedbox}
+					\def\UPC@notconfidential{\UPC@box}
+				}
+				{no}{
+					\def\UPC@confidential{\UPC@box}
+					\def\UPC@notconfidential{\UPC@checkedbox}
+				}
+				{false}{
+					\def\UPC@confidential{\UPC@box}
+					\def\UPC@notconfidential{\UPC@checkedbox}
+				}
+				{empty}{
+					\def\UPC@confidential{\UPC@box}
+					\def\UPC@notconfidential{\UPC@box}
+				}
+			}[\ClassWarning{\UPC@name}{There's no such value for #1 (statement)}]
+		}
+		{year}{\def\UPC@yearofconfidentiality{#2}}	
+	}[\ClassWarning{\UPC@name}{There's no such argument for statement}]
+}
+% 设置命令
+\newcommand{\statement}[1][confidentiality=empty]{
+	\def\UPC@confidential{\UPC@box}
+	\def\UPC@notconfidential{\UPC@checkedbox}
+	\def\UPC@yearofconfidentiality{}
+	\kv@parse{#1}{\arg@statement}
+	\clearpage
+	\thispagestyle{empty}
+	\vspace*{1em}
+	\begin{center}
+		\heiti \zihao{-2} \bfseries
+		学位论文原创性声明
+	\end{center}
+	
+	本人郑重声明：所呈交的论文是本人在导师的指导下独立进行研究所取得的研究成果。除了文中特别加以标注引用的内容外，本论文不包括任何其他个人或集体已经发表或撰写的成果作品。本人完全意识到本声明的法律后果由本人承担。
+	
+	\rightline{作者签名：\hspace{6em} 年 \hspace{2em} 月 \hspace{2em} 日}
+	\vspace{4em}
+	
+	\begin{center}
+		\heiti \zihao{-2} \bfseries
+		学位论文版权使用授权书
+	\end{center}
+	
+	本学位论文作者完全了解学校有关保障、使用学位论文的规定，同意学校保留并向有关学位论文管理部门或机构送交论文的复印件和电子版，允许论文被查阅和借阅。本人授权省级优秀学士论文评选机构将本学位论文的全部或部分内容编入有关数据进行检索，可以采用影印、缩印或扫描等复制手段保存和汇编本学位论文。
+	
+	\begin{tabbing}
+		\hspace{2em}本学位论文属于 \= 1、保密\hspace{1em} \=\HGP@confidential
+		，在\makebox[2em][c]{\HGP@yearofconfidentiality}年解密后适用本授权书。\\
+		\>2、不保密\>\HGP@notconfidential
+		。\\
+		\>（请在以上相应方框内打“$\checkmark$”）
+	\end{tabbing}
+	
+	\rightline{作者签名：\hspace{6em} 年 \hspace{2em} 月 \hspace{2em} 日}
+	
+	\rightline{导师签名：\hspace{6em} 年 \hspace{2em} 月 \hspace{2em} 日}
+	
+	\clearpage
+}
+\newcommand{\makestatement}[2][]{\statement[confidentialily=#2, year=#1]}
+
+%-----------------------------
+%----定义新的中英文摘要环境------
+%-----------------------------
+
+%中文摘要环境
+\newenvironment{cnabstract}[1]{
+	\def\cnkeyword{#1}
+	\clearpage
+	\phantomsection
+	\addcontentsline{toc}{section}{摘要}
+	\begin{center}
+		\heiti \bfseries \zihao{-2} 摘 \hspace{2em} 要
+	\end{center}
+}{
+	\vspace{1em}
+	\par\noindent
+	{\heiti \zihao{4} \bfseries 关键词：}
+	\cnkeyword
+	\clearpage
+}
+
+\newenvironment{enabstract}[1]{
+	\def \enkeyword {#1}
+	\clearpage
+	\phantomsection
+	\addcontentsline{toc}{section}{Abstract}
+	\begin{center}
+		\heiti \bfseries \zihao{-2} Abstract 
+	\end{center}
+}{
+	\vspace{1em}
+	\par\noindent
+	{\zihao{4} \bfseries Key Words: }
+	\enkeyword
+	\clearpage
+}
+
+%----------------------
+%----定义新的目录页面----
+%----------------------
+\RequirePackage{tocloft}
+\RequirePackage{hyperref}
+\hypersetup{
+	colorlinks = true,
+	linkcolor  = black,
+	pdfborder =000, %去掉链接红(黑)框
+	pdfstartview=FitH	%打开页面以窗口宽度显示
+}
+\renewcommand{\cfttoctitlefont}{\hfill \heiti \zihao{-2} \bfseries}
+\renewcommand{\contentsname}{目\hspace{2em}录}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\renewcommand{\cftbeforeloftitleskip}{0.5em}
+\renewcommand{\cftafterloftitleskip}{0.5em}
+\renewcommand{\cftsecdotsep}{\cftdotsep} %设置section引导点
+\renewcommand{\cftbeforesecskip}{0em} %设置段间距
+\renewcommand{\cftpartfont}{\songti \bfseries} %设置part字体
+\renewcommand{\cftsecfont}{\songti \bfseries}
+
+% 设置 \tableofcontents 参数解析
+\newcommand{\arg@tableofcontents}[2]{
+	\IfStrEqCase{#1}{
+		{pagenum}{
+			\IfStrEqCase{#2}{
+			{yes}{\def\UPC@plainfooterstyle{\footstyle}}
+			{true}{\def\UPC@plainfooterstyle{\footstyle}}
+			{no}{\def\UPC@plainfooterstyle{}}
+			{false}{\def\UPC@plainfooterstyle{}}
+			}[\ClassWarning{\HGP@name}{There's no such value for #1 (tableofcontents)}]
+		}
+		{toc in toc}{
+			\IfStrEqCase{#2}{
+				{yes}{\def\UPC@addtoctotoc{
+					\phantomsection
+					\addcontentsline{toc}{section}{目录}
+					}}
+				{true}{\def\UPC@addtoctotoc{
+					\phantomsection
+					\addcontentsline{toc}{section}{目录}
+					}}
+				{no}{\def\UPC@addtoctotoc{}}
+				{false}{\def\UPC@addtoctotoc{}}
+			}[\ClassWarning{\UPC@name}{There's no such value for #1 (tableofcontents)}]
+		}
+		{level}{\setcounter{tocdepth}{#2}}
+		{section indent}{\renewcommand{\cftsecindent}{#2}}
+		{subsection indent}{\renewcommand{\cftsubsecindent}{#2}}
+		{subsubsection indent}{\renewcommand{\cftsubsubsecindent}{#2}}
+		{subsubsubsection indent}{%
+			\def\l@subsubsubsection{\@dottedtocline{4}{#2}{4em}}
+		}
+		{paragraph indent}{\def\l@paragraph{\@dottedtocline{5}{#2}{5em}}}
+		{subparagraph indent}{\def\l@subparagraph{\@dottedtocline{5}{#2}{5em}}}
+		{indent}{
+			\IfStrEqCase{#2}{
+				{normal}{
+					\renewcommand{\cftsecindent}{0em}
+					\renewcommand{\cftsubsecindent}{1.5em}
+					\renewcommand{\cftsubsubsecindent}{3.8em}
+					\def\l@subsubsubsection{\@dottedtocline{4}{7em}{4em}}
+					\def\l@paragraph{\@dottedtocline{5}{11em}{5em}}
+					\def\l@subparagraph{\@dottedtocline{5}{13em}{5em}}
+				}
+				{noindent}{
+					\renewcommand{\cftsecindent}{0em}
+					\renewcommand{\cftsubsecindent}{0em}
+					\renewcommand{\cftsubsubsecindent}{0em}
+					\def\l@subsubsubsection{\@dottedtocline{4}{0em}{4em}}
+					\def\l@paragraph{\@dottedtocline{5}{0em}{5em}}
+					\def\l@subparagraph{\@dottedtocline{5}{0em}{5em}}
+				}
+				{UPCnoindent}{
+					\def\l@section{\songti \bfseries\@dottedtocline{1}{0em}{3em}}
+					\def\l@subsection{\normalfont\@dottedtocline{2}{0em}{3em}}
+					\def\l@subsubsection{\normalfont\@dottedtocline{3}{0em}{4em}}
+					\def\l@subsubsubsection{\normalfont\@dottedtocline{4}{0em}{5em}}
+					\def\l@paragraph{\normalfont\@dottedtocline{5}{0em}{6em}}
+				}
+				{sameforsubandsubsub}{
+					\renewcommand{\cftsecindent}{0em}
+					\renewcommand{\cftsubsecindent}{1.5em}
+					\renewcommand{\cftsubsubsecindent}{1.5em}
+					\def\l@subsubsubsection{\@dottedtocline{4}{1.5em}{4em}}
+					\def\l@paragraph{\@dottedtocline{5}{1.5em}{5em}}
+					\def\l@subparagraph{\@dottedtocline{5}{1.5em}{5em}}
+				}
+			}[\ClassWarning{\UPC@name}{There's no such value for #1 (tableofcontents)}]
+		}
+	}[\ClassWarning{\UPC@name}{There's no such argument for tableofcontents}]
+}
+
+\AtBeginDocument{
+	% 设置新的生成目录命令
+	\let \oldtableofcontents \tableofcontents
+	\renewcommand{\tableofcontents}[1][pagenum=false, toc in toc=false]{
+		\def\UPC@plainfooterstyle{}
+		\def\UPC@addtoctotoc{}
+		\kv@parse{#1}{\arg@tableofcontents}
+		% 修改 hdr(header) 原 plain 格式
+		\fancypagestyle{plain}{%
+			\fancyhf{} % 清空原有样式
+			\headstyleatbegin %%%%%%%% to do here
+			\UPC@plainfooterstyle
+		}
+		% 设置目录 hdr 和页码选项
+		\clearpage
+		\pagestyle{plain}
+		\UPC@addtoctotoc
+		\oldtableofcontents
+		\clearpage
+		\pagestyle{main}
+	}
+	% 旧命令
+	\newcommand{\maketoc}[1][nopagenum]{
+		\IfStrEqCase{#1}{
+			{nopagenum}{\tableofcontents[pagenum=false, toc in toc=false]}
+			{pagenum}{\tableofcontents[pagenum=true, toc in toc=false]}
+			{pagenumtoc}{\tableofcontents[pagenum=true, toc in toc=true]}
+		}
+	}
+}
 
 
 
