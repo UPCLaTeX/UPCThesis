@@ -226,15 +226,15 @@
 % 设置图表 Caption 的样式
 \RequirePackage{caption}
 \DeclareCaptionFont{UPC}{\normalsize \heiti}
-\captionsetup{labelse=quad}
+\captionsetup{labelsep=quad}
 \captionsetup{font={UPC, singlespacing}}
 \captionsetup[figure]{position=bottom, skip={0pt}}
 \captionsetup[table]{position=top, skip={0pt}}
 \setlength{\textfloatsep}{0pt}
 \setlength{\floatsep}{0pt}
-\setlength{\intextsetp}{6pt}
+\setlength{\intextsep}{6pt}
 \setlength{\abovecaptionskip}{0pt}
-\setlegnth{\belowcaptionskip}{0pt}
+\setlength{\belowcaptionskip}{0pt}
 
 % 重新设置图表 auto ref
 \def\figureautorefname~#1\null{%
@@ -257,20 +257,148 @@
 \setlength{\heavyrulewidth}{1.5pt}
 \setlength{\lightrulewidth}{0.5pt}
 \setlength{\cmidrulewidth}{0.5pt}
+\setlength{\aboverulesep}{0pt}
+\setlength{\belowrulesep}{0pt}
+\setlength{\abovetopsep}{0pt}
+\setlength{\belowbottomsep}{0pt}
+
+% 添加图需要的库
+\RequirePackage{graphicx}
+
+% 重新定义图和表的浮动环境
+\newenvironment{generalfig}[3][htbp]{
+	\def \figcaption {#2}
+	\def \figlabel {#3}
+	\begin{figure}[#1]
+		\centering
+	}{
+		\caption{\figcaption} \label{\figlabel}
+	\end{figure}
+}
+\newenvironment{generaltab}[3][htbp]{
+	\def \tabcaption {#2}
+	\def \tablabel {#3}
+	\begin{table}[#1]
+	\centering
+	}{
+	\end{table}
+}
+
+% -------------------------
+% ------设置公式格式--------
+% -------------------------
+\RequirePackage{amsmath}
+
+% 设置公式间距为零
+\AtBeginDocument{
+	\setlength{\abovedisplayskip}{6pt}
+	\setlength{\belowdisplayskip}{6pt}
+	\setlength{\abovedisplayshortskip}{0pt}
+	\setlength{\belowdisplayshortskip}{0pt}
+}
+
+% 公式编号带章节
+\numberwithin{equation}{section}
+
+% 重新设置公式autoref
+\def\equationautorefname~#1\null{%
+	式~(#1)~\null
+}
 
 
+%---------------------------
+%-----定义列表项的样式--------
+%---------------------------
+\RequirePackage{enumitem}
+\setlist{noitemsep}
 
 
+%---------------------------
+%-----   定义标题页  --------
+%---------------------------
+\RequirePackage{kvsetkeys}
+% 添加文档的新属性
+\def \@school {}
+\def \@classnum {}
+\def \@stuid {}
+\def \@supervisor {}
+\newcommand{\school}[1]{\def \@school{#1}}
+\newcommand{\classnum}[1]{\def \@school{#1}}
+\newcommand{\stuid}[1]{\def \@stuid{#1}}
+\newcommand{\supervisor}[1]{\def \@stuid{#1}}
 
+% 设置 \maketitle 参数解析
+\newcommand{\arg@maketitle}[2]{%
+	\IfStrEqCase{#1}{%
+		{logo color}{%
+			\IfStrEqCase{#2}{%
+				{green}{\def\UPC@titleColor{UPCLogo.png}}
+				{black}{\def\UPC@titleColor{UPCLogo.png}}
+			}[\ClassWarning{\UPC@name}{There's no such value for #1 (maketitle)}]
+		}
+		{line length}{\def\UPC@titlelength{#2}}
+		{line font}{
+			\IfStrEqCase{#2}{%
+				{huawenzhongsong}{\def\UPC@titlelinefont{\huawenzhongsong}}
+				{songti}		{\def\UPC@titlelinefont{\songti}}
+				{heiti}		{\def\UPC@titlelinefont{\heiti}}
+				{fangsong}	{\def\UPC@titlelinefont{\fangsong}}
+				{kaishu}		{\def\UPC@titlelinefont{\kaishu}}
+				{lishu}		{\def\UPC@titlelinefont{\lishu}}
+				{youyuan}		{\def\UPC@titlelinefont{\youyuan}}
+			}[\ClassWarning{\UPC@name}{Ther's no such value for #1 (maketitle)}]
+		}
+	}[\ClassWarning{\UPC@name}{There's no such argument for maketitle}]
+}
+\newcommand{\maketitlearg}[1]{%
+	\IfSubStr{#1}{=}{%
+		\kv@parse{#1}{\arg@maketitle}
+	}{%
+		\def\UPC@titlelength{#1}
+	}
+}
+% 重置命令 maketitle
+\renewcommand{\maketitle}[1][12em]{
+	\def\UPC@titlecolor{UPCLogo.png}
+	\def\UPC@titlelength{12em}
+	\def\UPC@titlelinefont{}
+	\maketitlearg{#1}
+	\begin{titlepage}
+		\includegraphics[width=7.3cm, height=1.8cm]{\UPC@titlecolor}\\
+		\begin{center}
+			\vspace*{5em}
+			\makebox[\textwidth]{\zihao{-0} \heiti \bfseries 本\hfill 科\hfill 毕\hfill 业\hfill 设\hfill 计\hfill （\hfill 论文\hfill ）}\\
+				\vspace{6em}
+				
+				\begin{flushleft}
+				\hspace{.5em}\zihao{-2} \heiti \makebox[3em]{题\hfill 目:} \@title
+				\end{flushleft}
+				
+				\vspace{6em}
+				{\zihao{3} \fangsong
+					\renewcommand\arraystretch{1.5}
+					\begin{tabular}{ll}
+						\makebox[4em][s]{学生姓名：} &
+						\makebox[\UPC@titlelength]{\UPC@titlelinefont\@author}\\
+						\makebox[4em][s]{学 \hfill 号：} &
+						\makebox[\UPC@titlelength]{\UPC@titlelinefont\@classnum}\\
+						\makebox[4em][s]{专业班级：} &
+						\makebox[\UPC@titlelength]{\UPC@titlelinefont\@stuid}\\
+						\makebox[4em][s]{指导教师：} &
+						\makebox[\UPC@titlelength]{\UPC@titlelinefont\@supervisor}\\
+					\end{tabular}
+				}\\
+			\vspace{4em}
+			{\zihao{3} \huawenzhongsong \@date}\\		
+		\end{center}
+	\end{titlepage}
+}
 
-
-
-
-
-
-
-
-
+%----------------------------
+%-------定义新的声明页面-------
+%----------------------------
+%使用特殊符号
+\RequirePackage{amssymb}
 
 
 
