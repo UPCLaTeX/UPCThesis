@@ -20,7 +20,6 @@
 \ProvidesClass{\UPC@name}[\UPC@date~\UPC@version~\UPC@introduction]
 \NeedsTeXFormat{LaTeX2e}
 
-
 \RequirePackage{xstring}
 
 \def\UPC@fontset{}
@@ -76,10 +75,10 @@
 
 
 \LoadClass[a4paper]{article}
-\RequirePackage[AutoFakeBold=true, AutoFakeSlant=true]{xeCJK}[2017/08/08]
+\RequirePackage[AutoFakeBold=1.28, AutoFakeSlant=true]{xeCJK}[2017/08/08]
 \RequirePackage[zihao=-4, UTF8, heading=true\UPC@fontset]{ctex}[2016/12/27]
 
-
+%\defaultCJKfontfeatures{AutoFakeBold=1.1}
 
 
 \RequirePackage{geometry}
@@ -106,12 +105,15 @@
 
 
 
-
 \RequirePackage{fancyhdr}
 \RequirePackage{tikz}
 
 \newcommand{\headstyleatbegin} {%
 	\fancyhead[C]{\kaishu \zihao{5} 中国石油大学（华东）本科毕业设计(论文)}
+}
+
+\newcommand{\headstyleatbody} {%
+	\fancyhead[C]{\kaishu \zihao{5}\CTEXthesection\hspace{1em} \rightmark}
 }
 
 \newcommand{\footstyle}{%
@@ -124,27 +126,30 @@
 
 \fancypagestyle{main}{%
 	\fancyhf{}
-	\headstyleatbegin	%%%%%%% to do here
+	\headstyleatbody	%%%%%%% to do here
 	\footstyle
 }
 
 
-
-
-
-
 \renewcommand{\baselinestretch}{1.62}
-\newcommand{\sectionbreak}{\clearpage}
+%\newcommand{\sectionbreak}{\clearpage}
+
+%\let\oldsection\section
+%\renewcommand\section[1]{%
+%	\clearpage
+%	\oldsection#1 %
+%}
 
 \ctexset{
 	section={%
-		format={\centering \heiti \bfseries \zihao{-2}}
+		format={\centering \heiti \zihao{3}},
+		name={第,章}
 	},
 	subsection={%
-		format={\raggedright \heiti \bfseries \zihao{4}}
+		format={\raggedright \heiti \zihao{4}}
 	},
 	subsubsection={%
-		format={\raggedright \heiti \bfseries \zihao{-4}}
+		format={\raggedright \heiti \zihao{-4}}
 	}
 }
 
@@ -161,6 +166,7 @@
 }
 
 \RequirePackage[indentafter]{titlesec}
+\newcommand{\sectionbreak}{\clearpage}
 
 \titleclass{\subsubsubsection}{straight}[\subsubsection]
 
@@ -326,9 +332,9 @@
 \def \@stuid {}
 \def \@supervisor {}
 \newcommand{\school}[1]{\def \@school{#1}}
-\newcommand{\classnum}[1]{\def \@school{#1}}
+\newcommand{\classnum}[1]{\def \@classnum{#1}}
 \newcommand{\stuid}[1]{\def \@stuid{#1}}
-\newcommand{\supervisor}[1]{\def \@stuid{#1}}
+\newcommand{\supervisor}[1]{\def \@supervisor{#1}}
 
 % 设置 \maketitle 参数解析
 \newcommand{\arg@maketitle}[2]{%
@@ -370,25 +376,25 @@
 		\includegraphics[width=7.3cm, height=1.8cm]{\UPC@titlecolor}\\
 		\begin{center}
 			\vspace*{5em}
-			\makebox[\textwidth]{\zihao{-0} \heiti \bfseries 本\hfill 科\hfill 毕\hfill 业\hfill 设\hfill 计\hfill （\hfill 论文\hfill ）}\\
-				\vspace{6em}
+			\makebox[\textwidth]{\zihao{-0} \heiti \bfseries 本\hfill 科\hfill 毕\hfill 业\hfill 设\hfill 计\hfill （论\hfill 文）}\\
+				\vspace{36pt}
 				
 				\begin{flushleft}
-				\hspace{.5em}\zihao{-2} \heiti \makebox[3em]{题\hfill 目:} \@title
+				\hspace{0.8em}\zihao{-2} \heiti \makebox[3.3em]{题\hfill 目:} \@title
 				\end{flushleft}
 				
 				\vspace{6em}
 				{\zihao{3} \fangsong
 					\renewcommand\arraystretch{1.5}
 					\begin{tabular}{ll}
-						\makebox[4em][s]{学生姓名：} &
-						\makebox[\UPC@titlelength]{\UPC@titlelinefont\@author}\\
-						\makebox[4em][s]{学 \hfill 号：} &
-						\makebox[\UPC@titlelength]{\UPC@titlelinefont\@classnum}\\
-						\makebox[4em][s]{专业班级：} &
-						\makebox[\UPC@titlelength]{\UPC@titlelinefont\@stuid}\\
-						\makebox[4em][s]{指导教师：} &
-						\makebox[\UPC@titlelength]{\UPC@titlelinefont\@supervisor}\\
+						\makebox[4.5em][s]{学生姓名:} &
+						\makebox[3em][s]{\UPC@titlelinefont\@author}\\
+						\makebox[4.5em][s]{学 \hfill 号:} &
+						\makebox[\UPC@titlelength][l]{\UPC@titlelinefont\@stuid}\\
+						\makebox[4.5em][s]{专业班级:} &
+						\makebox[\UPC@titlelength][l]{\UPC@titlelinefont\@classnum}\\
+						\makebox[4.5em][s]{指导教师:} &
+						\makebox[3em][s]{\UPC@titlelinefont\@supervisor}\\
 					\end{tabular}
 				}\\
 			\vspace{4em}
@@ -634,5 +640,97 @@
 	}
 }
 
+\renewcommand\sectionmark[1]{%
+	\markright{\CTEXifname{\CTEXthesection\hspace{1em}}{}#1}
+}
+
+%----------------------
+%----定义新的致谢环境----
+%----------------------
+\newenvironment{thankpage}{
+	\clearpage
+	\phantomsection
+	\addcontentsline{toc}{section}{致谢}
+	\section*{致谢}
+}{
+	\clearpage
+}
 
 
+%------------------------
+%----重新定义参考文献页----
+%------------------------
+% 设置参考文献 
+\usepackage{natbib}
+\setcitestyle{numbers, square, comma}
+\ctexset{bibname={参考文献}}
+
+% 正常引用和上标引用
+\let \normalcite \cite
+\newcommand{\supercite}[2][]{
+	\unskip
+	\def\UPC@temp{#1}
+	\ifx\UPC@temp\empty{\unskip\textsuperscrpit{\normalcite{#2}}}
+	\else{\unskip\textsuperscript{\normalcite[#1]{#2}}}\fi
+}
+\IfStrEqCase{\UPC@citestyle}{
+	{normal}{}
+	{super}{\let \cite \supercite}
+}
+
+% 设置参考文献样式
+\IfStrEqCase{\UPC@citebst}{
+	{gbt7714-2005}{\bibliographystyle{gbt7714-2005}}
+	{gbt7714-2015}{\bibliographystyle{gbt7714-2015}}
+	{thuthesis}{
+		\bibliographystyle{thuthesis}
+		\def\thudot{\unskip.}
+	}
+}
+
+% 设置心得参考文献
+\let \oldbibliography \bibliography
+\renewcommand{\bibliography}[1]{
+	% 添加到目录
+	\clearpage
+	\phantomsection
+	\addcontentsline{toc}{section}{参考文献}
+	\oldbibliography{#1}
+}
+
+%---------------
+%----其他设置----
+%---------------
+% PDF文件信息设置
+\AtBeginDocument{
+	\hypersetup{
+		pdfinfo={
+			Title={\@title}
+			Author={\@author}
+			Subject={中国石油大学（华东）本科生毕业论文}
+		}
+	}
+}
+
+% 查重识别问题
+\def\UPC@Otherbold{}
+\newcommand{\OtherBold}[1]{\def\UPC@Otherbold{#1}}
+\newcommand{\chachong}{
+	\clearpage
+	
+	{\heiti\zihao{1}\noindent 这部分用于加粗的复制，便于查重。请从这里开始删除！}
+	{\huawenzhongsong 中国石油大学（华东）毕业设计（论文）}
+	{\huawenzhongsong 本科生毕业设计（论文）}
+	{\heiti \@title 学生姓名 学号 专业班级 指导教师}
+	{\heiti \@title \@school \@author \@stuid \@classnum \@supervisor}
+	{\heiti 学位论文原创性声明 学位论文版权使用授权书 摘要 关键词 目录 致谢 参考文献 附录}
+	{\sonti 宋体}
+	
+	{\heiti \zihao{1}\noindent 一直删除到这里！}
+	
+	\UPC@Otherbold
+	
+	\clearpage
+}
+
+% 2018/2/9 22:03
