@@ -12,7 +12,9 @@
 
 % Todo list: 继续完成定制；修改hdr使之添加章节号；修改bfseries的 ``boldness''；修复标题页 学号 栏不齐的bug
 
-
+%-----------------
+%----定义新的类----
+%-----------------
 \def\UPC@name{upcthesis}
 \def\UPC@date{1926/08/17}
 \def\UPC@version{v0.0}
@@ -20,7 +22,10 @@
 \ProvidesClass{\UPC@name}[\UPC@date~\UPC@version~\UPC@introduction]
 \NeedsTeXFormat{LaTeX2e}
 
-\RequirePackage{xstring}
+%-------------------
+%----定义类的选项----
+%-------------------
+\RequirePackage{xstring} % 条件语句包
 
 \def\UPC@fontset{}
 \DeclareOption{autofont}{}
@@ -52,11 +57,11 @@
 	\def\UPC@fontset{,fontset=none}
 }
 
-
+% 页脚样式
 \def\UPC@footlinelength{6.7cm}
 \DeclareOption{footline}{\def\UPC@footlinelength{6.7cm}}
 \DeclareOption{nofootline}{\def\UPC@footlinelength{0cm}}
-
+% 文献引用样式
 \def\UPC@citestyle{normal}
 \DeclareOption{normalcite}{\def\UPC@citestyle{normal}}
 \DeclareOption{supercite}{\def\UPC@citestyle{super}}
@@ -64,81 +69,84 @@
 \DeclareOption{gbtcite}{\def\UPC@citebst{gbt7714-2005}}
 \DeclareOption{gbt15cite}{\def\UPC@citebst{gbt7714-2015}}
 \DeclareOption{thucite}{\def\UPC@citebst{thuthesis}}
+% 查重协助
 \DeclareOption{chachong}{\def\UPC@citebst{\chachong}}
-
 \ProcessOptions
 \ExecuteOptions{autofont, normalcites, gbtcite}
 \relax
 
-
-
-
-
+%-----------------
+%----载入class----
+%-----------------
 \LoadClass[a4paper]{article}
+% AutoFakeBold 表示伪粗的粗度
 \RequirePackage[AutoFakeBold=1.28, AutoFakeSlant=true]{xeCJK}[2017/08/08]
 \RequirePackage[zihao=-4, UTF8, heading=true\UPC@fontset]{ctex}[2016/12/27]
 
-%\defaultCJKfontfeatures{AutoFakeBold=1.1}
-
-
+%-----------------
+%----定义页边距----
+%-----------------
 \RequirePackage{geometry}
 \geometry{left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm}
 \geometry{headsep=1em, footskip=2em}
 \geometry{headheight=14pt}
 
-
-
-
-
+%---------------
+%----定义字体----
+%---------------
+% 设置正文常用字体
 \setmainfont{Times New Roman}
 \RequirePackage{fontspec}
-
+% 封面使用华文中宋
 \setCJKfamilyfont{hwzs}{STZhongsong}
 \newcommand{\huawenzhongsong}{\CJKfamily{hwzs}}
 \newfontfamily\hwzsAll{STZhongsong}[%
 	BoldFont={STZhongsong},
-	BoldFeatures={FakeBold}
+	BoldFeatures={FakeBold=4}
 ]
 
-
-
-
-
-
+%-------------------
+%----定义页眉页脚----
+%-------------------
+% 使用fancyhdr
 \RequirePackage{fancyhdr}
-\RequirePackage{tikz}
-
+\RequirePackage{tikz}	% 绘制页脚线，由HustGradPaper.cls 遗留而来
+% 非正文页页眉格式
 \newcommand{\headstyleatbegin} {%
-	\fancyhead[C]{\kaishu \zihao{5} 中国石油大学（华东）本科毕业设计(论文)}
+	\fancyhead[C]{\kaishu \zihao{5} 中国石油大学（华东）本科毕业设计（论文）}
 }
-
+% 正文页页眉格式，显示章节名
 \newcommand{\headstyleatbody} {%
-	\fancyhead[C]{\kaishu \zihao{5}\CTEXthesection\hspace{1em} \rightmark}
+	\fancyhead[C]{\kaishu \zihao{5} \rightmark}
 }
-
-\newcommand{\footstyle}{%
+% 正文页脚格式，有页码
+\newcommand{\footstyleatbody}{%
 	\fancyfoot[C]{\huawenzhongsong \zihao{5} \thepage}
 }
+
 \pagestyle{fancy}
 \fancyhf{}
 \headstyleatbegin
-\footstyle
 
+% 正文的页面格式
 \fancypagestyle{main}{%
 	\fancyhf{}
-	\headstyleatbody	%%%%%%% to do here
-	\footstyle
+	\headstyleatbody
+	\footstyleatbody
 }
 
+% 页眉的定制	
+\renewcommand\sectionmark[1]{%
+%	\markright{\CTEXifname{\CTEXthesection----}{}#1}
+	% 现在的问题是 \CTEXifname 没有起作用;
+	%一个workaround是结合\thesection直接指定名称
+	\markright{第\thesection 章~#1}
+}
+% 移除subsectionmark,否则页眉会显示subsection的标题
+\renewcommand\subsectionmark[1]{}	
 
 \renewcommand{\baselinestretch}{1.62}
 %\newcommand{\sectionbreak}{\clearpage}
-
-%\let\oldsection\section
-%\renewcommand\section[1]{%
-%	\clearpage
-%	\oldsection#1 %
-%}
 
 \ctexset{
 	section={%
@@ -176,7 +184,7 @@
 }
 
 \titleformat{\subsubsubsection}{%
-	\raggedright \heit \bfseries \zihao{-4}
+	\raggedright \heiti \bfseries \zihao{-4}
 }{\thesubsubsubsection}{1em}{}[]
 \titlespacing*{\subsubsubsection}{0pt}{3.25ex plus 1ex minus .2ex}{%
 	1.5ex plus .2ex
@@ -223,10 +231,10 @@
 \@addtoreset{footnote}{page}
 
 \renewcommand{\thefigure}{%
-	\ifnum \c@section > \z@ \thesection - \fi \@arabic \c@figure
+	\ifnum \c@section > \z@ \thesection--\fi\@arabic\c@figure
 }
 \renewcommand{\thetable}{%
-	\ifnum \c@section > \z@ \thesection - \fi \@arabic \c@table
+	\ifnum \c@section > \z@ \thesection--\fi\@arabic\c@table
 }
 \@addtoreset{figure}{section}
 \@addtoreset{table}{section}
@@ -234,7 +242,7 @@
 
 % 设置图表 Caption 的样式
 \RequirePackage{caption}
-\DeclareCaptionFont{UPC}{\normalsize \heiti}
+\DeclareCaptionFont{UPC}{\zihao{5} \songti}
 \captionsetup{labelsep=quad}
 \captionsetup{font={UPC, singlespacing}}
 \captionsetup[figure]{position=bottom, skip={0pt}}
@@ -289,6 +297,7 @@
 	\def \tablabel {#3}
 	\begin{table}[#1]
 	\centering
+	\caption{\tabcaption} \label{\tablabel}
 	}{
 	\end{table}
 }
@@ -638,10 +647,6 @@
 			{pagenumtoc}{\tableofcontents[pagenum=true, toc in toc=true]}
 		}
 	}
-}
-
-\renewcommand\sectionmark[1]{%
-	\markright{\CTEXifname{\CTEXthesection\hspace{1em}}{}#1}
 }
 
 %----------------------
