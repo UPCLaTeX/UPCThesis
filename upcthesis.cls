@@ -140,7 +140,7 @@
 %	\markright{\CTEXifname{\CTEXthesection----}{}#1}
 	% 现在的问题是 \CTEXifname 没有起作用;
 	%一个workaround是结合\thesection直接指定名称
-	\markright{第\thesection 章~#1}
+	\markright{第\thesection 章~~#1}
 }
 % 移除subsectionmark,否则页眉会显示subsection的标题
 \renewcommand\subsectionmark[1]{}	
@@ -151,7 +151,8 @@
 \ctexset{
 	section={%
 		format={\centering \heiti \zihao{3}},
-		name={第,章}
+		name={第,章},
+		aftertitle=\vspace{1em}
 	},
 	subsection={%
 		format={\raggedright \heiti \zihao{4}}
@@ -176,16 +177,18 @@
 \RequirePackage[indentafter]{titlesec}
 \newcommand{\sectionbreak}{\clearpage}
 
+% 定制 \subsubsubsection 命令
 \titleclass{\subsubsubsection}{straight}[\subsubsection]
-
 \newcounter{subsubsubsection}[subsubsection]
 \renewcommand\thesubsubsubsection{%
-	\thesubsubsection . \arabic{subsubsubsection}
+%	\thesubsubsection . \arabic{subsubsubsection}
+	% subsubsubsection 的 label 显示为 (1)
+	(~\arabic{subsubsubsection}~)
 }
 
-\titleformat{\subsubsubsection}{%
-	\raggedright \heiti \bfseries \zihao{-4}
-}{\thesubsubsubsection}{1em}{}[]
+\titleformat{\subsubsubsection}[block]{%
+	\hspace{2em}\raggedright \zihao{-4}
+}{\thesubsubsubsection}{0.5em}{}[]
 \titlespacing*{\subsubsubsection}{0pt}{3.25ex plus 1ex minus .2ex}{%
 	1.5ex plus .2ex
 }
@@ -340,10 +343,16 @@
 \def \@classnum {}
 \def \@stuid {}
 \def \@supervisor {}
+\def \@subtitle {}
+\def \@entitle {}
+\def \@ensubtitle {}
 \newcommand{\school}[1]{\def \@school{#1}}
 \newcommand{\classnum}[1]{\def \@classnum{#1}}
 \newcommand{\stuid}[1]{\def \@stuid{#1}}
 \newcommand{\supervisor}[1]{\def \@supervisor{#1}}
+\newcommand{\subtitle}[1]{\def \@subtitle{------#1}}
+\newcommand{\ensubtitle}[1]{\def \@ensubtitle{------#1}}
+\newcommand{\entitle}[1]{\def \@entitle{#1}}
 
 % 设置 \maketitle 参数解析
 \newcommand{\arg@maketitle}[2]{%
@@ -363,9 +372,15 @@
 				{fangsong}	{\def\UPC@titlelinefont{\fangsong}}
 				{kaishu}		{\def\UPC@titlelinefont{\kaishu}}
 				{lishu}		{\def\UPC@titlelinefont{\lishu}}
-				{youyuan}		{\def\UPC@titlelinefont{\youyuan}}
+				{youyuan}	{\def\UPC@titlelinefont{\youyuan}}
 			}[\ClassWarning{\UPC@name}{Ther's no such value for #1 (maketitle)}]
 		}
+%		{subtitle}{
+%%			\def\UPC@subtitle{\zihao{-2} \heiti \begin{flushright}------#2\end{flushright}%
+%			%\vspace{-5.7em}%
+%				\@subtitle
+%			}	% 增加副标题选项
+%		}
 	}[\ClassWarning{\UPC@name}{There's no such argument for maketitle}]
 }
 \newcommand{\maketitlearg}[1]{%
@@ -382,17 +397,19 @@
 	\def\UPC@titlelinefont{}
 	\maketitlearg{#1}
 	\begin{titlepage}
+%		\vspace*{.5em}
 		\includegraphics[width=7.3cm, height=1.8cm]{\UPC@titlecolor}\\
 		\begin{center}
-			\vspace*{5em}
+			\vspace{5em}
 			\makebox[\textwidth]{\zihao{-0} \heiti \bfseries 本\hfill 科\hfill 毕\hfill 业\hfill 设\hfill 计\hfill （论\hfill 文）}\\
-				\vspace{36pt}
+				\vspace*{36pt}
 				
 				\begin{flushleft}
 				\hspace{0.8em}\zihao{-2} \heiti \makebox[3.3em]{题\hfill 目:} \@title
 				\end{flushleft}
-				
-				\vspace{6em}
+				\makebox[\textwidth][r]{\heiti \zihao{-2} \@subtitle}
+%				\vspace{9.7em}
+				\vfill
 				{\zihao{3} \fangsong
 					\renewcommand\arraystretch{1.5}
 					\begin{tabular}{ll}
@@ -406,9 +423,10 @@
 						\makebox[3em][s]{\UPC@titlelinefont\@supervisor}\\
 					\end{tabular}
 				}\\
-			\vspace{4em}
+			\vspace*{5em}
 			{\zihao{3} \huawenzhongsong \@date}\\		
 		\end{center}
+		\vspace{3em}
 	\end{titlepage}
 }
 
@@ -497,10 +515,20 @@
 	\def\cnkeyword{#1}
 	\clearpage
 	\phantomsection
-	\addcontentsline{toc}{section}{摘要}
+%	\addcontentsline{toc}{section}{摘要}
 	\begin{center}
-		\heiti \bfseries \zihao{-2} 摘 \hspace{2em} 要
+		\vspace*{1.5em}
+		\makebox[\textwidth]{\heiti \zihao{-2} \@title}\\
+		%
+		\StrLen{\@subtitle}[\SubTitleLen]
+		\ifnum \SubTitleLen > 0
+			\makebox[\textwidth][r]{\heiti \zihao{-2} \@subtitle}
+		\fi
+		%
+		\heiti \zihao{3} 摘 \hspace{1em} 要
 	\end{center}
+	%	后面一定要空出一行，否则摘要首字符不会缩进
+	
 }{
 	\vspace{1em}
 	\par\noindent
@@ -513,10 +541,18 @@
 	\def \enkeyword {#1}
 	\clearpage
 	\phantomsection
-	\addcontentsline{toc}{section}{Abstract}
+%	\addcontentsline{toc}{section}{Abstract}
 	\begin{center}
+		\vspace*{1.5em}
+		\makebox[\textwidth]{\heiti \bfseries \zihao{-2} \vspace*{0.5em} \@entitle \vspace{0.5em}}\\
+		\StrLen{\@ensubtitle}[\EnSubTitleLen]
+		\ifnum \EnSubTitleLen > 0
+			\makebox[\textwidth][r]{\heiti \zihao{-2} \@ensubtitle}
+		\fi
 		\heiti \bfseries \zihao{-2} Abstract 
 	\end{center}
+	%	后面一定要空出一行，否则摘要首字符不会缩进
+	
 }{
 	\vspace{1em}
 	\par\noindent
@@ -615,15 +651,36 @@
 				}
 			}[\ClassWarning{\UPC@name}{There's no such value for #1 (tableofcontents)}]
 		}
+		{abstract}{
+			\IfStrEqCase{#2}{
+				{true}{\def\UPC@addabstracttotoc{
+					\phantomsection
+					\addcontentsline{toc}{section}{Abstract}
+					\phantomsection
+					\addcontentsline{toc}{section}{摘要}
+					}
+				}
+				{yes}{\def\UPC@addabstracttotoc{
+					\phantomsection
+					\addcontentsline{toc}{section}{Abstract}
+					\phantomsection
+					\addcontentsline{toc}{section}{摘要}
+					}
+				}
+				{no}{\def\UPC@addabstracttotoc{}}
+				{false}{\def\UPC@addabstracttotoc{}}
+			}
+		}
 	}[\ClassWarning{\UPC@name}{There's no such argument for tableofcontents}]
 }
 
 \AtBeginDocument{
 	% 设置新的生成目录命令
 	\let \oldtableofcontents \tableofcontents
-	\renewcommand{\tableofcontents}[1][pagenum=false, toc in toc=false]{
+	\renewcommand{\tableofcontents}[1][pagenum=false, toc in toc=false, level=3, abstract=false]{
 		\def\UPC@plainfooterstyle{}
 		\def\UPC@addtoctotoc{}
+		\def\UPC@addabstracttotoc{}
 		\kv@parse{#1}{\arg@tableofcontents}
 		% 修改 hdr(header) 原 plain 格式
 		\fancypagestyle{plain}{%
@@ -635,9 +692,11 @@
 		\clearpage
 		\pagestyle{plain}
 		\UPC@addtoctotoc
+		\UPC@addabstracttotoc
 		\oldtableofcontents
 		\clearpage
 		\pagestyle{main}
+		\setcounter{page}{1}
 	}
 	% 旧命令
 	\newcommand{\maketoc}[1][nopagenum]{
@@ -655,7 +714,7 @@
 \newenvironment{thankpage}{
 	\clearpage
 	\phantomsection
-	\addcontentsline{toc}{section}{致谢}
+	\addcontentsline{toc}{section}{致\hspace{1em}谢}
 	\section*{致谢}
 }{
 	\clearpage

@@ -8,14 +8,20 @@
 \supervisor{导师}
 \stuid{12053100}
 \classnum{电气工程及其自动化12-5班}
+\subtitle{这是副标题}
+\entitle{This is EnTitle}
+\ensubtitle{This is EnSubTitle}
 
 \begin{document}
 	\maketitle
 %	\lipsum[1]
-	\begin{cnabstract}{关键词}
+	\begin{cnabstract}{关键词1, 关键词2}
 		数据结构算法设计和演示（C++）树和查找是在面向对象思想和技术的指导下，采用面向对象的编程语言（C++）和面向对象的编程工具（Borland C++ Builder 6.0）开发出来的小型应用程序。它的功能主要是将数据结构中链表、栈、队列、树、查找、图和排序部分的典型算法和数据结构用面向对象的方法封装成类，并通过类的对外接口和对象之间的消息传递来实现这些算法，同时利用C++ Builder 6.0中丰富的控件资源和系统资源对算法实现过程的流程和特性加以动态的演示，从而起到在数据结构教学中帮助理解、辅助教学和自我学习的作用。
-%		\keywords 
 	\end{cnabstract}
+
+	\begin{enabstract}{keyword1, keyword2}
+		\lipsum[1]
+	\end{enabstract}
 
 \tableofcontents
 
@@ -32,8 +38,11 @@
 \subsection{线性顺序表}
 线性表的顺序存储结构的特点是为表中相邻的元素$a_i$和$a_{i+1}$赋以相邻的存储位置。
 \subsubsection{三级标题名}
+\lipsum[2]
 \subsubsection{三级标题名}
+\lipsum[3]
 	\subsubsubsection{三级以下标题}
+	\lipsum[4]
 \subsection{线性链表}
 	线性表的链式存储结构的特点是用一组任意的存储单元存储线性表的数据元素（这组元素可以是连续的,也可以是不连续的）。
 
@@ -49,7 +58,7 @@
 		b \approx \frac{L_0}{\rho\tan(\theta_0) + z_0}
 	\end{equation}
 式中：$z_0$ 为Goos-Hanchen 位移；$\theta_0$ 为光波的入射角。
-\subsection{线性表的00P设计}
+\subsection{线性表的OOP设计}
 	计算机内部可以采用两种不同方法来表示一个线性表,它们分别是顺序表示法和链表表示法。
 	
 	……。
@@ -109,6 +118,14 @@
 
 	而且还存在着许多不足之处。如：
 
-	
+\begin{thankpage}
+	\lipsum[10]
+\end{thankpage}
 
+\begin{appendices}
+	\section{Appendix A}
+	\subsection{Some Appendix}
+%	\lipsum[11]
+	\subsection{Some Other Appendix}
+\end{appendices}
 \end{document}
