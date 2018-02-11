@@ -762,7 +762,7 @@
 \newcommand{\supercite}[2][]{
 	\unskip
 	\def\UPC@temp{#1}
-	\ifx\UPC@temp\empty{\unskip\textsuperscrpit{\normalcite{#2}}}
+	\ifx\UPC@temp\empty{\unskip\textsuperscript{\normalcite{#2}}}
 	\else{\unskip\textsuperscript{\normalcite[#1]{#2}}}\fi
 }
 \IfStrEqCase{\UPC@citestyle}{
