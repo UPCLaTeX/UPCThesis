@@ -7,11 +7,14 @@ goto error
 
 :clean
 	echo Cleaning...
-	del *.aux *.pdf *.out *.toc *.log
+	del *.aux *.pdf *.out *.toc *.log *.blg
 	goto end
 
 :compile
 	echo Compiling...
+	xelatex main.tex
+	bibtex main.aux
+	xelatex main.tex
 	xelatex main.tex
 	echo Compilation done.
 	open main.pdf

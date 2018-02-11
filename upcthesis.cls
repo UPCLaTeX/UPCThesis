@@ -135,6 +135,12 @@
 	\footstyleatbody
 }
 
+\fancypagestyle{afterbody}{%
+	\fancyhf{}
+	\headstyleatbegin
+	\footstyleatbody
+}
+
 % 页眉的定制	
 \renewcommand\sectionmark[1]{%
 %	\markright{\CTEXifname{\CTEXthesection----}{}#1}
@@ -152,7 +158,7 @@
 	section={%
 		format={\centering \heiti \zihao{3}},
 		name={第,章},
-		aftertitle=\vspace{1em}
+		aftertitle=\vspace{1.3em}
 	},
 	subsection={%
 		format={\raggedright \heiti \zihao{4}}
@@ -205,9 +211,27 @@
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
 
+% 设置附录样式
+\RequirePackage[toc, titletoc, page, header]{appendix}
+%\appendixtocon
+%\appendixtitletocon
+%\appendixpageon
+%\appendixheaderon
+% 重新定制附录的环境
+\newenvironment{generalappendices}{
+	\renewcommand\appendixpagename{\centering \makebox[2cm][s]{\zihao{3} 附录}}
+	\renewcommand\appendixtocname{附录}
+	\renewcommand\appendixname{sdfsdf}
+	\renewcommand\thesection{}
+%	\renewcommand{\cftsecindent}{12pt}
+	\titleformat{\section}[block]{\raggedright\heiti\zihao{3}\bfseries}{\thesection}{0.5em}{}
+	\titleformat{\appendixpagename}[block]{\centering}{}{0.5em}{}
+	\clearpage
+	\appendix
+	\appendixpage
+}{	
+}
 
-\RequirePackage[title, titletoc]{appendix}
-\renewcommand{\appendixname}{附录}
 
 
 \def\sectionautorefname~#1\null{%
@@ -392,6 +416,7 @@
 }
 % 重置命令 maketitle
 \renewcommand{\maketitle}[1][12em]{
+%	\renewcommand{\thepage}{S\arabic{page}}
 	\def\UPC@titlecolor{UPCLogo.png}
 	\def\UPC@titlelength{12em}
 	\def\UPC@titlelinefont{}
@@ -530,9 +555,9 @@
 	%	后面一定要空出一行，否则摘要首字符不会缩进
 	
 }{
-	\vspace{1em}
+	\vspace{1.5em}
 	\par\noindent
-	{\heiti \zihao{4} \bfseries 关键词：}
+	{\songti \zihao{4} \bfseries 关键词：}
 	\cnkeyword
 	\clearpage
 }
@@ -554,9 +579,9 @@
 	%	后面一定要空出一行，否则摘要首字符不会缩进
 	
 }{
-	\vspace{1em}
+	\vspace{1.5em}
 	\par\noindent
-	{\zihao{4} \bfseries Key Words: }
+	{\zihao{4} \bfseries Keywords: }
 	\enkeyword
 	\clearpage
 }
@@ -706,6 +731,8 @@
 			{pagenumtoc}{\tableofcontents[pagenum=true, toc in toc=true]}
 		}
 	}
+	
+	\renewcommand{\thepage}{\arabic{page}}
 }
 
 %----------------------
@@ -713,9 +740,10 @@
 %----------------------
 \newenvironment{thankpage}{
 	\clearpage
+	\pagestyle{afterbody}
 	\phantomsection
-	\addcontentsline{toc}{section}{致\hspace{1em}谢}
-	\section*{致谢}
+	\addcontentsline{toc}{section}{致谢}
+	\section*{致\hspace{0.6cm}谢}
 }{
 	\clearpage
 }
@@ -752,11 +780,12 @@
 	}
 }
 
-% 设置心得参考文献
+% 设置新的参考文献
 \let \oldbibliography \bibliography
 \renewcommand{\bibliography}[1]{
 	% 添加到目录
 	\clearpage
+	\pagestyle{afterbody}
 	\phantomsection
 	\addcontentsline{toc}{section}{参考文献}
 	\oldbibliography{#1}

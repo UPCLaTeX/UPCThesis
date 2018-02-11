@@ -1,5 +1,4 @@
 \documentclass{upcthesis}
-%\usepackage{ctex}
 \usepackage{lipsum}
 
 \title{这是标题}
@@ -44,7 +43,7 @@
 	\subsubsubsection{三级以下标题}
 	\lipsum[4]
 \subsection{线性链表}
-	线性表的链式存储结构的特点是用一组任意的存储单元存储线性表的数据元素（这组元素可以是连续的,也可以是不连续的）。
+	线性表的链式存储结构的特点是用一组任意的存储单元存储线性表的数据元素（这组元素可以是连续的,也可以是不连续的）。\cite{yanDS}
 
 \section{设计的主体内容}
 在着手进行上机设计之前首先做好大量准备:应熟悉课题，进行调查研究，收集国内、外资料、分析研究；交互界面的设计和实现。
@@ -66,7 +65,7 @@
 	过阻尼响应如\autoref{fig:fig1}所示。
 	\begin{figure}[htbp]
 		\centering
-		\includegraphics{./fig1.png}
+		\includegraphics{./figures/fig1.png}
 		\caption{过阻尼响应}
 		\label{fig:fig1}
 	\end{figure}
@@ -74,21 +73,21 @@
 \subsubsection{线性表的顺序存储的实现}
 ……。
 
-以上是顺序表的实现过程,第1-16行包含了list类的说明,接下来是成员函数的定义。
+以上是顺序表的实现过程,第1-16行包含了list类的说明,接下来是成员函数的定义。\cite{C++OOP}
 
 ……。
 
 \subsubsection{线性表的链表存储的实现}
 ……
 
-链表的实现包括两个类定义，第一个是link类，第二个是list类。由于一个链表由若干个单独的链结点对象组成，因此一个链结点应当作为单独的link类实现。
+链表的实现包括两个类定义，第一个是link类，第二个是list类。由于一个链表由若干个单独的链结点对象组成，因此一个链结点应当作为单独的link类实现。\cite{RBSS}
 
 ……
 
 ……
 
 \section{结果分析与讨论}
-例如由于起初未能真正掌握各种控件的功能，我设想是要一个下拉菜单，但是学识肤浅的我试了很多种就是达不到我要的效果，……。
+例如由于起初未能真正掌握各种控件的功能，我设想是要一个下拉菜单，但是学识肤浅的我试了很多种就是达不到我要的效果，……。\cite{JPKNA}
 
 ……。
 
@@ -122,10 +121,15 @@
 	\lipsum[10]
 \end{thankpage}
 
-\begin{appendices}
-	\section{Appendix A}
+\bibliography{./bibs/bibliography.bib}
+
+\begin{generalappendices}
+%\begin{appendices}
+	\section{Appendix 1}
 	\subsection{Some Appendix}
-%	\lipsum[11]
+	\lipsum[11]
+	\section{Appendix 2}
 	\subsection{Some Other Appendix}
-\end{appendices}
+%\end{appendices}[toc, page, title, titletoc, header]
+\end{generalappendices}
 \end{document}
